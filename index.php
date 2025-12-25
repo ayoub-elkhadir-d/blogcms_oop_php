@@ -11,7 +11,6 @@ $articles = [
     new Article(3, "Maintenance Serveur","Une maintenance est prévue ce soir à 22h pour optimiser les performances.",1)
 ];
 $categories = [
-    
     new Category(1, "Technologie", null),
     new Category(2, "Corporate", null),
     new Category(3, "Hardware", null),
@@ -21,6 +20,7 @@ $categories = [
     new Category(7, "JavaScript", 4),
     new Category(8, "Événements", 2)
 ];
+
 
 
 
@@ -36,6 +36,8 @@ class User
     protected array $articles = [];
     protected DateTime $created_at;
     protected DateTime $lastLogin;
+    
+    private $current_user = null; 
 
     public function __construct($id, $username, $email, $password)
     {
@@ -46,16 +48,14 @@ class User
         $this->created_at = new DateTime();
         $this->lastLogin = new DateTime();
     }
-
+    
     public function readArticle($id, $articles)
     {
         foreach($articles as $article){
             if($article->getId() === $id){
          return $article->getContent($id, $articles);           
          }
-        } 
-
-        
+        }  
     }
 
     public function writeComment($id,$array_article, string $content)
@@ -74,15 +74,28 @@ class User
         return $this->id;
     } 
 
+
     public function  login (array $array_users,$user_,$pass){
         foreach($array_users as $user){
               if ($user->username === $user_ && $user->password === $pass) {
-            return true;
-            $is_login = true;
+                 $this->current_user = $user;
+                 return true;
+          
            }  
+           return false;
         }
     }
-      
+      public function getCurrentUser() {
+        return $this->current_user;
+    }
+
+     public function isLoggedIn() {
+        return $this->current_user !== null;
+    }
+     public function logout() {
+        $this->current_user = null;
+        return;
+    }
 public function get_all_articles($articles){
     foreach($articles as $article){
         echo $this->readArticle($article->getId(), $articles);
@@ -166,7 +179,8 @@ class Article
         {
             $count_cmt = count($this->comments);
 
-            return "============== {$this->id} =================
+            return "
+        ============== {$this->id} =================
         | {$this->title}
         ===================================
         | {$this->content}
@@ -307,25 +321,44 @@ class Admin extends Moderation
 /*===================================================*/
 $admin = new Author(1,"AminaAdmin","amina@mediapress.com","admin_2025",null,new DateTime('2025-01-01 08:00:00'),new DateTime('2025-12-24 10:30:00'));
  $art= new Article(1,"Bienvenue sur BlogCMS","Voici le premier article de notre système en ligne de commande.",5);
-while(true){
-echo "================== \n 1)display all articles \n 2) write comment \n 3) se connect \n";
-$choix = readline('Enter : ');
-
-switch ($choix) {
-   case 1:
-    $admin->get_all_articles($articles);
-       break;
-   case 2:
-       $choix_id = (int) readline('Enter id de post : ');
-       $content = readline('Enter content de comment : ');
-       $admin -> writeComment($choix_id,$articles,$content);
-       break;
-   case 3:
-       echo "Your favorite color is green!";
-       break;
-
+ while(true){
+    $menu = "visitor";
+if($admin->isLoggedIn()){
+    echo "1) Display all articles\n";
+    echo "2) Write comment\n";
+    echo "3) Manage my article\n";
+    echo "0) Logout\n";
+   
 }
-}
+
+    else if ($menu = "visitor"){
+
+while($menu === "visitor"){
+    echo "1) Display all articles\n";
+    echo "2) Write comment\n";
+    echo "0) Se Connect\n";
+
+    $choix = readline('Enter : ');
+    switch ($choix) {
+    case 1:
+        $admin-> get_all_articles($articles);
+        break;
+    case 2:
+        $choix_id = (int) readline('Enter id de post : ');
+        $content = readline('Enter content de comment : ');
+        $admin -> writeComment($choix_id,$articles,$content);
+        break;
+    case 3:
+            $user_name = readline('Enter user name : ');
+            $password = readline('Enter password : ');
+            if($admin->login($users,$user_name,$password)){$menu = "Author";}else{echo "incorect";};
+           
+        break;
+    }
+    }
+    }
+ }
+
 
 // // echo $admin -> login($users,"AminaAdmin","admin_2025");
 // $admin -> writeComment(1,$articles,"hi");
