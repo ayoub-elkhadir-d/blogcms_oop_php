@@ -1,9 +1,8 @@
 <?php
 
-/*****************************************************
+/*mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
 **********************  USER  *************************
-*****************************************************/
-
+mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm*/
 class User
 {
     protected int $id;
@@ -40,12 +39,12 @@ class User
     }
 }
 
-/*****************************************************
+/*mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm*
 **********************  AUTHOR  ***********************
-*****************************************************/
+mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm*/
 class Author extends User
 {
-    protected string $bio;
+   
 
     public function createArticle(string $title, string $content, Category $category)
     {
@@ -54,23 +53,23 @@ class Author extends User
 
     public function deleteOwnArticle(Article $article)
     {
-        return true;
+
     }
 
     public function updateOwnArticle(Article $article, string $title, string $content)
     {
         $article->setTitle($title);
         $article->setContent($content);
-        return true;
+     
     }
 }
 
-/*****************************************************
+/*mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
 ********************** ARTICLE ***********************
-*****************************************************/
+mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm*/
 class Article
 {
-    private ?int $id;
+    private int $id;
     private string $title;
     private string $content;
     private int $category_id;
@@ -88,21 +87,21 @@ class Article
         $this->updated_at = new DateTime();
     }
 
-    public function addCategory(int $category_id): bool
+    public function addCategory(int $category_id)
     {
         $this->category_id = $category_id;
-        return true;
+       
     }
 
-    public function removeCategory(): bool
-    {
-        $this->category_id = 0;
-        return true;
-    }
+    // public function removeCategory()
+    // {
+    //     $this->category_id = 0;
+   
+    // }
 
-    public function publish(): bool { return true; }
-    public function unpublish(): bool { return true; }
-    public function archiver(): bool { return true; }
+    public function publish() { }
+    public function unpublish() { }
+    public function archiver(){ }
 
     public function getId()
     {
@@ -118,9 +117,9 @@ class Article
     public function setContent($content) { $this->content = $content; }
 }
 
-/*****************************************************
+/*mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm*
 ********************** CATEGORY ***********************
-*****************************************************/
+mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm*/
 class Category
 {
     private int $id;
@@ -135,31 +134,16 @@ class Category
         $this->parentCategoryId = $parent;
     }
 
-    public function addSubCategory(Category $category): bool
+
+
+    public function update(array $data)
     {
-        $this->children[] = $category;
-        return true;
+     
     }
 
-    public function getChildren(): array
+    public function delete()
     {
-        return $this->children;
-    }
-
-    public function getParent(): ?int
-    {
-        return $this->parentCategoryId;
-    }
-
-    public function update(array $data): bool
-    {
-        if (isset($data['name'])) $this->name = $data['name'];
-        return true;
-    }
-
-    public function delete(): bool
-    {
-        return true;
+        
     }
 
     public function getId()
@@ -168,12 +152,12 @@ class Category
     }
 }
 
-/*****************************************************
+/*mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm*
 ********************** COMMENT ************************
-*****************************************************/
+mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm*/
 class Comment
 {
-    private ?int $id;
+    private int $id;
     private string $content;
     private int $user_id;
     private int $article_id;
@@ -189,18 +173,19 @@ class Comment
     public function update(string $content)
     {
         $this->content = $content;
-        return true;
+        
     }
 
     public function delete()
     {
-        return true;
+        
     }
 }
 
-/*****************************************************
+
+/*mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm*
 ******************** MODERATION ***********************
-*****************************************************/
+mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm*/
 class Moderation
 {
     public function createAssignArticle() {}
@@ -224,24 +209,17 @@ class Moderation
     }
 }
 
-/*****************************************************
-*********************** EDITOR ************************
-*****************************************************/
-class Editor extends Moderation
-{
-    protected string $moderationLevel;
-}
 
-/*****************************************************
+/*mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm*
 ************************ ADMIN ************************
-*****************************************************/
+mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm*/
 class Admin extends Moderation
 {
     private bool $isSuperAdmin;
 
     public function createUser(User $user) {}
     public function deleteUser(User $user) {}
-    public function assignRole(User $user, string $role) {}
+
 }
 
 ?>
