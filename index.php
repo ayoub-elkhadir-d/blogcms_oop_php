@@ -5,81 +5,33 @@ $users = [
         "AminaAdmin",
         "amina@mediapress.com",
         "admin_2025",
-        
-        new DateTime("2025-01-01 08:00:00"),
-        new DateTime("2025-12-24 10:30:00"),
-        [
-    new Article(
-        1,
-        "Bienvenue sur BlogCMS",
-        "Voici le premier article de notre système en ligne de commande.",
-        5
+        [new Article(1,"Bienvenue sur BlogCMS","Voici le premier article de notre système en ligne de commande.",5),
+    new Article( 2,"POO en PHP","Introduction simple à la programmation orientée objet en PHP.", 4 ),]
     ),
-    new Article(
-        2,
-        "POO en PHP",
-        "Introduction simple à la programmation orientée objet en PHP.",
-        4
-    ),
-]
-    ),
-    new Author(
+    new Admin(
         2,
         "ThomasEdit",
         "thomas@mediapress.com",
         "editor_pass",
         
-        new DateTime("2025-02-15 09:15:00"),
-        new DateTime("2025-12-20 16:45:00"),
-        [
-        new Article(
-            3,
-            "Édition de contenu",
-            "Comment éditer efficacement des articles existants.",
-            2
-        )
-]
+        [new Article( 3, "Édition de contenu","Comment éditer efficacement des articles existants.",2)]
     ),
     new Author(
         3,
         "LeaWriter",
         "lea@mediapress.com",
         "writing_fun",
-        
-        new DateTime("2025-03-10 11:00:00"),
-        new DateTime("2025-12-25 09:00:00"),
-        [
-            new Article(
-                4,
-                "Écriture créative",
-                "Conseils pour améliorer votre écriture.",
-                3
-            ),
-            new Article(
-                5,
-                "Discipline d’écriture",
-                "Écrire un peu chaque jour fait la différence.",
-                3
-            ),
-        ]
+        [new Article(4,"Écriture créative","Conseils pour améliorer votre écriture.",3),
+        new Article(5,"Discipline d’écriture","Écrire un peu chaque jour fait la différence.",3),]
     ),
     new Author(
         4,
         "MarcoDev",
         "marco@external.com",
         "guest_pwd",
-        
-        new DateTime("2025-05-20 14:00:00"),
-        new DateTime("2025-12-25 09:00:00"),
-           [new Article(
-        6,
-        "Développement invité",
-        "Retour d’expérience d’un développeur externe.",
-        1
-    )
-]
-    ),
+        [new Article(6,"Développement invité","Retour d’expérience d’un développeur externe.",1)]),
 ];
+
 $articles = [
     new Article(
         1,
@@ -123,10 +75,11 @@ class User
     protected array $articles = [];
     protected DateTime $created_at;
     protected DateTime $lastLogin;
-
+          
     private $current_user = null;
+    private $Role= "Visitor";
 
-    public function __construct($id, $username, $email, $password,DateTime $created_at,DateTime $lastLogin,array $articles = [])
+    public function __construct($id, $username, $email, $password,array $articles = [])
     {
         $this->id = $id;
         $this->username = $username;
@@ -141,18 +94,17 @@ class User
     {
         foreach ($articles as $article) {
             if ($article->getId() === $id) {
-                return $article->getContent($id, $articles);
+                return $article->getContent();
             }
         }
     }
         public function read_Article_of_user()
     {
         if($this->isLoggedIn()){
-        //      foreach ($this->current_user as $article) {
-        //         print_r
-        // }
-        print_r($this->getCurrentUser()->articles);
+           foreach($this->getCurrentUser()->articles as $art){
+          print_r($art->getContent());
 
+        }
         }
        
     }
@@ -168,20 +120,33 @@ class User
             }
         }
     }
+    public function write_article(Article $art){
+        if($this->isLoggedIn()){
+       array_push($this->getCurrentUser()->articles,$art);
+        print_r($this->getCurrentUser()->articles);
+        }
+    }
 
     public function getId()
     {
         return $this->id;
     }
+    public function getRole()
+    {
+        return $this->Role;
+    }
+
 
     public function login(array $array_users, $user_, $pass)
     {
         foreach ($array_users as $user) {
+           
             if ($user->username === $user_ && $user->password === $pass) {
+                $this -> Role=get_class($user); 
                 $this->current_user = $user;
                 return true;
             }
-            return false;
+          
         }
     }
     public function getCurrentUser()
@@ -196,6 +161,7 @@ class User
     public function logout()
     {
         $this->current_user = null;
+        $this-> Role= "Visitor";
         return;
     }
     public function get_all_articles($articles)
@@ -298,6 +264,7 @@ class Article
         ===================================
         Comments: {$count_cmt}
         ===================================\n";
+
     }
 
     public function setTitle($title)
@@ -389,7 +356,7 @@ class Comment
 /*mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm*
  ******************** MODERATION ***********************
  mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm*/
-class Moderation
+class Moderation extends User
 {
     public function createAssignArticle()
     {
@@ -428,7 +395,7 @@ class Moderation
     }
 }
 
-/*mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm*
+/*mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm*
  ************************ ADMIN ************************
  mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm*/
 class Admin extends Moderation
@@ -445,13 +412,12 @@ class Admin extends Moderation
 
 /*===================================================*/
 // $obj = new Admin();
+
 $obj = new Author(
     1,
-    "AminaAdmin",
+    "ppp",
     "amina@mediapress.com",
-    "admin_2025",
-    new DateTime("2025-01-01 08:00:00"),
-    new DateTime("2025-12-24 10:30:00"),
+    "adminppp_2025",
     $articles
 );
 $art = new Article(
@@ -461,12 +427,14 @@ $art = new Article(
     5
 );
 
-while (true) {
-    $menu = "visitor";
-    if (get_class($obj) === "Author" && $obj->isLoggedIn()) {
 
-       
-        echo "\n======Author=========\n";
+while (true) {
+
+    $Role = $obj -> getRole();
+    $menu = $Role;
+
+    if ($menu === "Author" && $obj->isLoggedIn()) {
+        echo "\n====== Author =========\n";
         echo "1) Display all articles\n";
         echo "2) Write comment\n";
         echo "3) Manage my article\n";
@@ -475,23 +443,46 @@ while (true) {
      $choix = readline("Enter : ");
             switch ($choix) {
                 case 1:
-                $obj->read_Article_of_user();
+                    
+                    $obj->get_all_articles($articles);
                     break;
                 case 2:
-                  
+                     
                     break;
                 case 3:
-                 
+                    echo "\n====== Article Manage =========\n";
+                    echo "1) Display my articles\n";
+                    echo "2) Write Article\n";
+                    echo "3) Write Comment\n";
+                    echo "0) Exit";
+                    echo "========================\n";
+
+                 $choix = readline("Enter : ");
+                      switch($choix){
+                        case 1:
+                           $obj->read_Article_of_user();
+                            break;
+                        case 2:
+                            $obj->write_article(new Article(4,"Écriture créative","Conseils pour améliorer votre écriture.",3));
+                            break;
+                        case 3:
+
+                            break;
+                        case 0;
+                          $obj->read_Article_of_user();
+                            break;
+                      }
+        
                     break;
                 case 0:
                 $obj->logout();
-               
+                     
                 break;
             }
         
 
-    }elseif(get_class($obj) === "Admin"){
-        popen('cls', 'w');
+    }elseif($menu === "Admin"){
+       
         echo "\n======Admin=========\n";
         echo "1) Display all articles\n";
         echo "2) Write comment\n";
@@ -502,23 +493,24 @@ while (true) {
      $choix = readline("Enter : ");
             switch ($choix) {
                 case 1:
-                 
+                  popen('cls', 'w');
+                    $obj->get_all_articles($articles);
                     break;
                 case 2:
                   
                     break;
                 case 3:
-                 
+                   
                     break;
                 case 0:
-                $obj->logout();
+               print_r($obj->logout());
                
                 break;
             }
     
     }else {
         
-        while ($menu === "visitor") {
+        while ($menu === "Visitor") {
             echo "\n======visitor=========\n";
             echo "1) Display all articles\n";
             echo "2) Write comment\n";
@@ -530,7 +522,7 @@ while (true) {
                 case 1:
                    popen('cls', 'w');
                     $obj->get_all_articles($articles);
-                    break;
+                     break;
                 case 2:
                     $choix_id = (int) readline("Enter id de post : ");
                     $content = readline("Enter content de comment : ");
@@ -542,7 +534,8 @@ while (true) {
                     $user_name = readline("Enter user name : ");
                     $password = readline("Enter password : ");
                     if ($obj->login($users, $user_name, $password)) {
-                        $menu = "Author";
+                         $menu = $obj -> getRole();
+                         print_r($menu);
                     } else {
                         echo "incorect";
                     }
@@ -552,11 +545,12 @@ while (true) {
     }
 }
 
-// // echo $obj -> login($users,"AminaAdmin","admin_2025");
+// echo $obj -> login($users,"AminaAdmin","admin_2025");
 // $admin -> writeComment(1,$articles,"hi");
 
 // array_push($articles,$admin-> createArticle(count($articles)+1,"title","article content4",new Category(8, "Événements", 2)));
 
-// echo $admin ->readArticle(1,$articles);
+// add user article
+
 
 ?>
