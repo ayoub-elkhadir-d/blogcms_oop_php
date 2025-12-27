@@ -32,26 +32,14 @@ $users = [
         [new Article(6,"Développement invité","Retour d’expérience d’un développeur externe.",1)]),
 ];
 
-$articles = [
-    new Article(
-        1,
-        "Bienvenue sur BlogCMS",
-        "Voici le premier article de notre système en ligne de commande.",
-        5
-    ),
-    new Article(
-        2,
-        "Maîtriser la POO PHP",
-        "La programmation orientée objet permet de structurer son code proprement.",
-        3
-    ),
-    new Article(
-        3,
-        "Maintenance Serveur",
-        "Une maintenance est prévue ce soir à 22h pour optimiser les performances.",
-        1
-    ),
-];
+    function count_articles($users):int {
+        $count = 0;
+        foreach($users as $user){
+           $count += count($user->getUserArticles());
+        }
+        return $count;
+    }
+
 $categories = [
     new Category(1, "Technologie", null),
     new Category(2, "Corporate", null),
@@ -89,7 +77,7 @@ class User
         $this->lastLogin = new DateTime();
         $this->articles = $articles;
     }
-
+     
     public function readArticle($id,$articles)
     {
         foreach ($articles as $article) {
@@ -109,21 +97,27 @@ class User
        
     }
 
+public function writeComment(int $id, Comment $comment)
+{
+    if (!$this->isLoggedIn()) {
+        echo "login first\n";
+        return;
+    }
 
-    public function writeComment($id, $array_article, string $content)
-    {
-        foreach ($array_article as $article) {
-            if ($article->getId() === $id) {
-                $article->addComment(
-                    new Comment(1, $content, $this->id, $article->getId())
-                );
-            }
+    foreach ($this->getCurrentUser()->articles as $article) {
+        if ($article->getId() === $id) {
+            $article->addComment($comment);
+           
+            return;
         }
     }
+
+   
+}
+
     public function write_article(Article $art){
         if($this->isLoggedIn()){
        array_push($this->getCurrentUser()->articles,$art);
-        print_r($this->getCurrentUser()->articles);
         }
     }
 
@@ -134,6 +128,10 @@ class User
     public function getRole()
     {
         return $this->Role;
+    }
+  public function getUserArticles()
+    {
+        return $this->articles;
     }
 
 
@@ -227,7 +225,7 @@ class Article
         $this->created_at = new DateTime();
         $this->updated_at = new DateTime();
     }
-
+     
     public function addCategory(int $category_id)
     {
         $this->category_id = $category_id;
@@ -247,9 +245,16 @@ class Article
     {
         return $this->id;
     }
-    public function addComment(Comment $comment)
+
+
+     public function addComment(Comment $comment)
     {
         $this->comments[] = $comment;
+    }
+
+    public function getComments(): array
+    {
+        return $this->comments;
     }
 
     public function getContent()
@@ -360,6 +365,7 @@ class Moderation extends User
 {
     public function createAssignArticle()
     {
+    
     }
     public function deleteArticle(Article $article)
     {
@@ -413,19 +419,15 @@ class Admin extends Moderation
 /*===================================================*/
 // $obj = new Admin();
 
-$obj = new Author(
+$obj = new User(
     1,
     "ppp",
     "amina@mediapress.com",
     "adminppp_2025",
-    $articles
+    [new Article(6,"Développement invité","Retour d’expérience d’un développeur externe.",1)]
 );
-$art = new Article(
-    1,
-    "Bienvenue sur BlogCMS",
-    "Voici le premier article de notre système en ligne de commande.",
-    5
-);
+
+
 
 
 while (true) {
@@ -463,10 +465,12 @@ while (true) {
                            $obj->read_Article_of_user();
                             break;
                         case 2:
-                            $obj->write_article(new Article(4,"Écriture créative","Conseils pour améliorer votre écriture.",3));
+                            $titre = readline("Enter titre : ");
+                            $desc = readline("Enter description: ");
+                            $obj->write_article(new Article(count_articles($users)+1,$titre,$desc,3));
                             break;
                         case 3:
-
+                           $obj->writeComment(6 , new Comment(17, "kjhgf",4, 6));
                             break;
                         case 0;
                           $obj->read_Article_of_user();
@@ -520,6 +524,7 @@ while (true) {
             $choix = readline("Enter : ");
             switch ($choix) {
                 case 1:
+              
                    popen('cls', 'w');
                     $obj->get_all_articles($articles);
                      break;
