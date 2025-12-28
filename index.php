@@ -234,14 +234,7 @@ class Author extends User
     return new Article($id, $title, $content, $category->getId());
   }
 
-  public function deleteOwnArticle($articles, $id)
-  {
-    foreach ($articles as $article) {
-      if ($article->getId() === $id) {
-        unset($articless[$id]);
-      }
-    }
-  }
+
 
   public function updateOwnArticle(
     Article $article,
@@ -318,6 +311,18 @@ class Article
   {
     $this->content = $content;
   }
+    public function removeCommentById($commentId)
+  {
+      foreach ($this->comments as $key => $comment) {
+          if ($comment->getId() === $commentId) {
+              unset($this->comments[$key]);
+             
+              $this->comments = array_values($this->comments);
+              return true;
+          }
+      }
+      return false;
+  }
 }
 
 /*mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm*
@@ -371,12 +376,13 @@ class Comment
     $this->article_id = $article_id;
   }
 
-  public function update(string $content)
-  {
-    $this->content = $content;
+   public function getId() {
+      return $this->id;
   }
-
-  public function delete() {}
+  
+  public function getContent() {
+      return $this->content;
+  }
 
 }
 
@@ -420,6 +426,18 @@ class Moderation extends User
         echo "Article not found\n";
     }
 
+      public function deleteComment(int $commentId, array &$users)
+    {
+        foreach ($users as $user) {
+            foreach ($user->getUserArticles() as $article) {
+                if ($article->removeCommentById($commentId)) {
+                    echo "Comment deleted successfully from Article ID: " . $article->getId() . "\n";
+                    return;
+                }
+            }
+        }
+        echo "Comment ID not found.\n";
+    }
  
     public function updateArticle(
         int $articleId,
@@ -440,17 +458,7 @@ class Moderation extends User
         echo "Article not found\n";
     }
 
-  
-    public function publierArticle(Article $article)
-    {
-        
-    }
-
-
-    public function archiveArticle(Article $article)
-    {
-      
-    }
+ 
 
 
     public function createCategory(array &$categories, Category $category)
@@ -490,11 +498,7 @@ class Moderation extends User
         echo "Comment updated successfully\n";
     }
 
-    public function deleteComment(Comment $comment)
-    {
-        $comment->delete();
-        echo "Comment deleted successfully\n";
-    }
+
 }
 
 
@@ -564,6 +568,7 @@ while (true) {
     $choix = readline("Enter : ");
     switch ($choix) {
       case 1:
+        popen("cls", "w");
         $obj->get_all_articles($users);
         break;
       case 2:
@@ -574,6 +579,8 @@ while (true) {
         $obj->writeComment(6, new Comment(17, $content, 4, $id), $users);
         break;
       case 3:
+        
+        popen("cls", "w");
         echo "\n====== Article Manage =========\n";
         echo "1) Display my articles\n";
         echo "2) Write Article\n";
@@ -584,10 +591,13 @@ while (true) {
         $choix = readline("Enter : ");
         switch ($choix) {
           case 1:
+            popen("cls", "w");
             $obj->read_Article_of_user();
             break;
           case 2:
-    display_categories_list($categories);
+            popen("cls", "w");
+             echo "\n----------- Choisir Category ----------\n";
+           display_categories_list($categories);
                         
           $titre = readline("Enter titre : ");
           $desc = readline("Enter description: ");
@@ -599,15 +609,11 @@ while (true) {
           echo "Article created successfully!\n";
             break;
            case 3:
-                      case 3:
-           
+            
+           popen("cls", "w");
             echo "\n--- Your Articles ---\n";
             $obj->read_Article_of_user(); 
-            
-        
             $idUpdate = (int) readline("Enter Article ID to update: ");
-            
-            
             $foundArticle = null;
             $myArticles = $obj->getCurrentUser()->getUserArticles();
             
@@ -617,18 +623,16 @@ while (true) {
                     break;
                 }
             }
-
-
             if ($foundArticle !== null) {
+                popen("cls", "w");
                 echo "--- Updating Article ID: $idUpdate ---\n";
                 $newTitle = readline("Enter new Title: ");
                 $newContent = readline("Enter new Description: ");
-                
-
                 $obj->getCurrentUser()->updateOwnArticle($foundArticle, $newTitle, $newContent);
                 echo "Article updated successfully!\n";
             } else {
-                echo "Error: Article ID not found or does not belong to you.\n";
+                popen("cls", "w");
+                echo " Article ID not found \n";
             }
             break;
 
@@ -651,6 +655,7 @@ while (true) {
     echo "3) Manage articles\n";
     echo "4) Manage users\n";
     echo "5) Manage Categories\n";
+    echo "6) Manage comments\n";
     echo "0) Logout\n";
     echo "======================\n";
 
@@ -658,10 +663,12 @@ while (true) {
     switch ($choix) {
       case 1:
         popen("cls", "w");
+        echo "\n----------- All article ----------\n";
         $obj->get_all_articles($users);
         break;
       case 2:
         popen("cls", "w");
+         echo "\n----------- Write  Comment ----------\n";
         $obj->get_all_articles($users);
         $id = (int) readline("Enter article id : ");
         $content = readline("Enter content : ");
@@ -670,7 +677,7 @@ while (true) {
       case 3:
         case 3:
             if ($obj->getCurrentUser() instanceof Moderation) {
-
+                popen("cls", "w");
                 echo "\n====== Manage Articles ======\n";
                 echo "1) Assign article to author\n";
                 echo "2) Update article\n";
@@ -684,7 +691,8 @@ while (true) {
 
                 
                     case 1:
-                           
+                            popen("cls", "w");
+                            echo "\n----------- Creat article ----------\n";
                             $authorId = (int) readline("Enter Author ID : ");
                             $title = readline("Article title : ");
                             $content = readline("Article content : ");
@@ -705,6 +713,8 @@ while (true) {
 
       
                     case 2:
+                        popen("cls", "w");
+                        echo "\n----------- Update article ----------\n";
                         $obj->get_all_articles($users);
 
                         $articleId = (int) readline("Enter Article ID : ");
@@ -717,6 +727,8 @@ while (true) {
 
                 
                     case 3:
+                       popen("cls", "w");
+                       echo "\n----------- Delet Article ----------\n";
                         $obj->get_all_articles($users);
 
                         $articleId = (int) readline("Enter Article ID to delete : ");
@@ -748,10 +760,14 @@ while (true) {
 
         switch ($choiceUser) {
             case 1:
+               popen("cls", "w");
+               echo "\n----------- All Users ----------\n";
                 $obj->getCurrentUser()->displayAllUsers($users);
                 break;
 
             case 2:
+                popen("cls", "w");
+                echo "\n----------- Creat User ----------\n";
                 $id = count($users) + 1;
                 $username = readline("Username : ");
                 $email = readline("Email : ");
@@ -768,6 +784,8 @@ while (true) {
                 break;
 
             case 3:
+                popen("cls", "w");
+                echo "\n----------- Delet User ----------\n";
                 $obj->getCurrentUser()->displayAllUsers($users);
                 $idDelete = (int) readline("Enter user id to delete : ");
                 $obj->getCurrentUser()->deleteUser($users, $idDelete);
@@ -778,7 +796,7 @@ while (true) {
          break;
 
         case 5:
-                
+                     popen("cls", "w");
                     echo "\n====== Manage Categories ======\n";
                     echo "1) List Categories\n";
                     echo "2) Add Category\n";
@@ -791,21 +809,28 @@ while (true) {
 
                     switch ($catChoice) {
                         case 1:
+                             popen("cls", "w"); 
+                             echo "\n----------- all categoryes ----------\n";
                             display_categories_list($categories);
                             break;
                         case 2:
+                            popen("cls", "w");
+                            echo "\n----------- creat category ----------\n";
                             $catName = readline("Enter Category Name: ");
-                           
                             $newId = end($categories)->getId() + 1; 
                             $newCat = new Category($newId, $catName);
                             $obj->getCurrentUser()->createCategory($categories, $newCat);
                             break;
                         case 3:
+                            popen("cls", "w");
+                            echo "\n----------- delet category ----------\n";
                             display_categories_list($categories);
                             $delId = (int)readline("Enter Category ID to delete: ");
                             $obj->getCurrentUser()->deleteCategory($categories, $delId);
                             break;
                         case 4:
+                            popen("cls", "w");
+                            echo "\n----------- Update category ----------\n";
                             display_categories_list($categories);
                             $updId = (int)readline("Enter Category ID to update: ");
                             $newName = readline("Enter new name: ");
@@ -817,9 +842,38 @@ while (true) {
                 }
                 break;
               case 0:
-        print_r($obj->logout());
+       $obj->logout();
 
         break;
+        case 6:
+         popen("cls", "w");
+         echo "\n====== Manage Comments ======\n";
+         echo "1) List All Comments\n";
+         echo "2) Delete Comment\n";
+         echo "0) Back\n";
+         echo "=============================\n";
+         
+         $cmtChoice = readline("Enter: ");
+         switch($cmtChoice) {
+             case 1:
+                 echo "\n--- All System Comments ---\n";
+                 foreach($users as $u) {
+                     foreach($u->getUserArticles() as $a) {
+                         foreach($a->getComments() as $c) {
+                             echo "ID: " . $c->getId() . " | Article: " . $a->getId() . " | Content: " . $c->getContent() . "\n";
+                         }
+                     }
+                 }
+                 echo "---------------------------\n";
+                 break;
+             case 2:
+                 $cmtId = (int)readline("Enter Comment ID to delete: ");
+                 $obj->getCurrentUser()->deleteComment($cmtId, $users);
+                 break;
+             case 0: break;
+         }
+         break;
+
     }
   } else {
     while ($menu === "Visitor") {
@@ -833,10 +887,12 @@ while (true) {
       switch ($choix) {
         case 1:
           popen("cls", "w");
+          echo "\n----------- All articles ----------\n";
           $art->get_all_articles($users);
           break;
         case 2:
           popen("cls", "w");
+          echo "\n----------- write comment ----------\n";
           $obj->get_all_articles($users);
           $id = (int) readline("Enter article id : ");
           $content = readline("Enter content : ");
@@ -844,6 +900,8 @@ while (true) {
           break;
 
         case 0:
+          popen("cls", "w");
+          echo "\n----------- log in ----------\n";
           $user_name = readline("Enter user name : ");
           $password = readline("Enter password : ");
           if ($obj->login($users, $user_name, $password)) {
