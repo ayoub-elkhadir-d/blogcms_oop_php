@@ -500,7 +500,12 @@ class Moderation extends User
 
 
 }
-
+/*mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm*
+ ************************ Editor ************************
+ mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm*/
+ 
+class Editor extends Moderation
+{}
 
 /*mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm*
  ************************ ADMIN ************************
