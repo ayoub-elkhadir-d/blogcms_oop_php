@@ -1,56 +1,9 @@
 <?php
 $users = [
-  new Author(1, "AminaAdmin", "amina@mediapress.com", "admin_2025", [
-    new Article(
-      1,
-      "Bienvenue sur BlogCMS",
-      "Voici le premier article de notre système en ligne de commande.",
-      5,
-    ),
-    new Article(
-      2,
-      "POO en PHP",
-      "Introduction simple à la programmation orientée objet en PHP.",
-      4,
-    ),
-  ]),
-  new Admin(
-    2,
-    "ThomasEdit",
-    "thomas@mediapress.com",
-    "editor_pass",
-
-    [
-      new Article(
-        3,
-        "Édition de contenu",
-        "Comment éditer efficacement des articles existants.",
-        2,
-      ),
-    ],
-  ),
-  new Author(3, "LeaWriter", "lea@mediapress.com", "writing_fun", [
-    new Article(
-      4,
-      "Écriture créative",
-      "Conseils pour améliorer votre écriture.",
-      3,
-    ),
-    new Article(
-      5,
-      "Discipline d’écriture",
-      "Écrire un peu chaque jour fait la différence.",
-      3,
-    ),
-  ]),
-  new Author(4, "MarcoDev", "marco@external.com", "guest_pwd", [
-    new Article(
-      6,
-      "Développement invité",
-      "Retour d’expérience d’un développeur externe.",
-      1,
-    ),
-  ]),
+  new Author(1, "AminaAdmin", "amina@mediapress.com", "admin_2025", [new Article(1,"Bienvenue sur BlogCMS","Voici le premier article de notre système en ligne de commande.",5,),new Article(2,"POO en PHP","Introduction simple à la programmation orientée objet en PHP.",4,),]),
+  new Admin(2,"ThomasEdit","thomas@mediapress.com","editor_pass",[new Article(3,"Édition de contenu","Comment éditer efficacement des articles existants.",2,),],),
+  new Author(3, "LeaWriter", "lea@mediapress.com", "writing_fun", [new Article(4,"Écriture créative","Conseils pour améliorer votre écriture.",3,),new Article(5,"Discipline d’écriture","Écrire un peu chaque jour fait la différence.",3,),]),
+  new Author(4, "MarcoDev", "marco@external.com", "guest_pwd", [new Article(6,"Développement invité","Retour d’expérience d’un développeur externe.",1,),])
 ];
 
 function count_articles($users): int
@@ -562,7 +515,6 @@ $art = new Article(0, "test", "test", 0);
 while (true) {
   $Role = $obj->getRole();
   $menu = $Role;
-
   if ($menu === "Author" && $obj->isLoggedIn()) {
     echo "\n====== Author =========\n";
     echo "1) Display all articles\n";
