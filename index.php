@@ -581,7 +581,7 @@ while (true) {
         $obj->get_all_articles($users);
         $id = (int) readline("Enter article id : ");
         $content = readline("Enter content : ");
-        $obj->writeComment(6, new Comment(17, $content, 4, $id), $users);
+        $obj->writeComment($id, new Comment(17, $content, 4, $id), $users);
         break;
       case 3:
         
@@ -677,7 +677,7 @@ while (true) {
         $obj->get_all_articles($users);
         $id = (int) readline("Enter article id : ");
         $content = readline("Enter content : ");
-        $obj->writeComment(6, new Comment(17, $content, 4, $id), $users);
+        $obj->writeComment($id, new Comment(17, $content, 4, $id), $users);
         break;
       case 3:
         case 3:
@@ -904,7 +904,7 @@ while (true) {
           $obj->get_all_articles($users);
           $id = (int) readline("Enter article id : ");
           $content = readline("Enter content : ");
-          $obj->writeComment(6, new Comment(17, $content, 4, $id), $users);
+          $obj->writeComment($id, new Comment(17, $content, 4, $id), $users);
           break;
 
         case 0:
