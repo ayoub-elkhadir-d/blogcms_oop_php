@@ -503,7 +503,7 @@ class Moderation extends User
 /*mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm*
  ************************ Editor ************************
  mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm*/
- 
+
 class Editor extends Moderation
 {}
 
@@ -698,6 +698,9 @@ while (true) {
                     case 1:
                             popen("cls", "w");
                             echo "\n----------- Creat article ----------\n";
+                            foreach($users as $user){
+                             echo "ID: " . $user->getId() . "|  Username: ".$user->getUsername()."\n";
+                            }
                             $authorId = (int) readline("Enter Author ID : ");
                             $title = readline("Article title : ");
                             $content = readline("Article content : ");
@@ -893,7 +896,7 @@ while (true) {
         case 1:
           popen("cls", "w");
           echo "\n----------- All articles ----------\n";
-          $art->get_all_articles($users);
+          $obj->get_all_articles($users);
           break;
         case 2:
           popen("cls", "w");
